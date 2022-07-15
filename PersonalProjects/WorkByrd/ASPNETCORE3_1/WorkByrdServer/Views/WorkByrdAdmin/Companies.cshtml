@@ -1,0 +1,9 @@
+﻿@model List<WorkByrdServer.Models.CompanyAdmin>
+
+@{
+    ViewData["Title"] = "WorkByrd Administration - Accounts - Companies";
+}
+
+<h4>@ViewData["Title"]</h4>
+
+@Html.WorkByrdDataTable(Model, "Company", Url.ActionLink("Companies", "WorkByrdAdmin"))

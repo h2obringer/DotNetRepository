@@ -1,0 +1,9 @@
+﻿@model List<WorkByrdServer.Models.CountryAdmin>
+
+@{
+    ViewData["Title"] = "WorkByrd Administration - Geography - Countries";
+}
+
+<h4>@ViewData["Title"]</h4>
+
+@Html.WorkByrdDataTable(Model, "Country", Url.ActionLink("Countries", "WorkByrdAdmin"))

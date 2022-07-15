@@ -1,0 +1,69 @@
+﻿@model WorkByrdServer.Models.RegisterCompanyEmailViewModel
+
+@{
+    ViewData["Title"] = "Confirm Your Company Email";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>
+    Please check your company email to confirm your account.
+</p>
+<form name="VerifyCompanyEmailForm" id="VerifyCompanyEmailForm" asp-controller="Account" asp-action="ResendCompanyEmailVerification" method="post">
+    <h4>Verify Email:</h4>
+    <hr />
+    <div asp-validation-summary="All" id="CompanyEmailValidationSummary" class="text-danger"></div>
+    <div class="form-group">
+        <input asp-for="@Model.UserID" id="CompanyEmailUserID" type="hidden" class="form-control" />
+        <span asp-validation-for="@Model.UserID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input asp-for="@Model.CompanyID" type="hidden" class="form-control" />
+        <span asp-validation-for="@Model.CompanyID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input asp-for="@Model.Email" type="hidden" class="form-control" />
+        <span asp-validation-for="@Model.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <p>You should be receiving a verification email shortly. Haven't received it yet?</p>
+    </div>
+    <button id="btnResendCompanyEmailForm" type="submit" class="btn btn-primary">Resend Verification Email</button>
+</form>
+
+<script>    
+	function alertOfCompanyEmailVerification() {
+		alert("An email verification has been sent to " + $("#Email").val()
+			+ ". If you don't see this email in your inbox within several minutes, look for it in your junk mail folder.");
+	}
+
+    $(document).ready(function () {
+
+        $("#VerifyCompanyEmailForm").submit(function (e) {
+            debugger;
+            e.preventDefault(); //stop normal form submission
+            
+            $("#CompanyEmailValidationSummary > ul").empty();
+            var formData = new FormData(e.target);
+
+            wbGetSecureJSON(
+                '@Url.Action("ResendCompanyEmailVerification", "Account")',
+                formData
+            ).then(function (data) {
+                if (data.Success != null) {
+                    alertOfCompanyEmailVerification();
+                } else if (data.Error != null) {
+                    $("#CompanyEmailValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                    clearInterval(companyemailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+                    clearProgress("#company-email-progress");
+                }
+            }).catch(function (err) {
+                console.error(err);
+                $("#CompanyEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+                clearInterval(companyemailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+                clearProgress("#company-email-progress");
+            });
+            return false;
+        });
+
+    });
+</script>

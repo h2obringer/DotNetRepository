@@ -1,0 +1,24 @@
+﻿@model List<WorkByrdServer.Models.CompanyUsersAdmin>
+
+@{
+    ViewData["Title"] = "WorkByrd Administration - Accounts - Companies - Company Users";
+}
+
+<h4>@ViewData["Title"]</h4>
+<h5>Company: @ViewData["CompanyName"]</h5>
+
+@Html.WorkByrdDataTable(Model, "CompanyUsers", Url.ActionLink("CompanyUsers", "WorkByrdAdmin"))
+
+<div>
+    <button id="btnAddCompanyUser" class="btn btn-success">Add User</button>
+</div>
+<input id="CompanyID" type="hidden" name="" value="@ViewData["CompanyID"]" />
+
+<script>
+    $(document).ready(function(){
+        $("#btnAddCompanyUser").click(function () {
+            var currentURL = window.location.href;
+            //var newURL = 
+        });
+    });
+</script>

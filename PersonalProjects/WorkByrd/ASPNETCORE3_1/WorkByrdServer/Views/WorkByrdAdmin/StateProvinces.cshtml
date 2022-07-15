@@ -1,0 +1,10 @@
+﻿@model List<WorkByrdServer.Models.StateProvinceAdmin>
+
+@{
+    ViewData["Title"] = "WorkByrd Administration - Geography - States and Provinces";
+
+}
+
+<h4>@ViewData["Title"]</h4>
+
+@Html.WorkByrdDataTable(Model, "StateProvince", Url.ActionLink("StateProvinces", "WorkByrdAdmin"))

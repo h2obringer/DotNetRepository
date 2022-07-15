@@ -1,0 +1,61 @@
+﻿@model WorkByrdServer.Models.RegisterUserEmailViewModel
+
+@{
+    ViewData["Title"] = "Confirm Your User Account Email";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>
+    Please check your email to confirm your account.
+</p>
+<form name="VerifyUserEmailForm" id="VerifyUserEmailForm" asp-controller="Account" asp-action="ResendUserEmailVerification" method="post">
+    <h4>Verify Email:</h4>
+    <hr />
+    <div asp-validation-summary="All" id="UserEmailValidationSummary" class="text-danger"></div>
+    <div class="form-group">
+        <input asp-for="@Model.UserID" type="hidden" class="form-control" />
+        <span asp-validation-for="@Model.UserID" class="text-danger"></span>
+    </div>
+    <input asp-for="@Model.Email" type="hidden" value="@Model.Email"/>
+    <div class="form-group">
+        <p>You should be receiving a verification email shortly. Haven't received it yet?</p>
+    </div>
+    <button id="btnResendUserEmailForm" type="submit" class="btn btn-primary">Resend Verification Email</button>
+</form>
+
+<script>
+    function alertOfUserEmailVerification() {
+        alert("An email verification has been sent to " + $("#Email").val()
+			+ ". If you don't see this email in your inbox within several minutes, look for it in your junk mail folder.");
+	}
+
+    $(document).ready(function () {
+        //var useremailform = $("#VerifyUserEmailForm").validate();
+
+        $("#VerifyUserEmailForm").submit(function (e) {
+            e.preventDefault(); //stop normal form submission
+            $("#UserEmailValidationSummary > ul").empty();
+            var formData = new FormData(e.target);
+            wbGetSecureJSON(
+                '@Url.Action("ResendUserEmailVerification", "Account")',
+                formData
+            ).then(function (data) {
+                debugger;
+				if (data.Success != null) {
+					alertOfUserEmailVerification();
+				} else if (data.Error != null) {
+                    $("#UserEmailValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                    clearInterval(useremailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+					clearProgress("#user-email-progress");
+                }
+            }).catch(function (err) {
+                debugger;
+                console.error(err);
+                $("#UserEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+				clearInterval(useremailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+				clearProgress("#user-email-progress");
+            });
+            return false;
+        });
+    });
+</script>

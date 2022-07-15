@@ -1,0 +1,8 @@
+﻿The purpose of this document is to point out anything that might cause issues for your development so that you can avoid them:
+
+The ASP.NET Core default form value count is 1024 (max 1024 form variables can be posted). Changing it in Startup.cs with the following code fixex this issue:
+
+    services.Configure<FormOptions>(options =>
+    {
+        options.ValueCountLimit = int.MaxValue; //2,147,483,647
+    });

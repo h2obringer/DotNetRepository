@@ -1,0 +1,576 @@
+﻿@model RegisterCompanyViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@*<div class="row">
+    <div class="col-md-4">
+        <form name="UserForm" id="UserForm" asp-controller="Account" asp-action="RegisterUser" method="post">
+            <h4>Create a New Account:</h4>
+            <hr />
+            <div asp-validation-summary="All" id="UserValidationSummary" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.Email"></label>
+                <input asp-for="@Model.RegisterUserViewModel.Email" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.FirstName"></label>
+                <input asp-for="@Model.RegisterUserViewModel.FirstName" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.LastName"></label>
+                <input asp-for="@Model.RegisterUserViewModel.LastName" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.PhoneNumber"></label>
+                <input asp-for="@Model.RegisterUserViewModel.PhoneNumber" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.Password"></label>
+                <input asp-for="@Model.RegisterUserViewModel.Password" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterUserViewModel.ConfirmPassword"></label>
+                <input asp-for="@Model.RegisterUserViewModel.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserViewModel.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="btnUserForm" type="submit" class="btn btn-primary">Register User</button>
+        </form>
+        <br />
+
+        <a id="VerifyUserEmailAnchor"></a>
+        <form name="VerifyUserEmailForm" id="VerifyUserEmailForm" asp-controller="Account" asp-action="ResendUserEmailVerification" method="post">
+            <h4>Verify Email:</h4>
+            <hr />
+            <div asp-validation-summary="All" id="UserEmailValidationSummary" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterUserEmailViewModel.UserID" type="hidden" class="form-control" />
+                <span asp-validation-for="@Model.RegisterUserEmailViewModel.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <p>You should be receiving a verification email shortly. Haven't received it yet?</p>
+            </div>
+            <button id="btnResendUserEmailForm" type="submit" class="btn btn-primary">Resend Verification Email</button>
+        </form>
+        <br />
+
+        <a id="CompanyAnchor"></a>
+        <form name="CompanyForm" id="CompanyForm" asp-controller="Account" asp-action="RegisterCompany" method="post">
+            <h4>Create a new Company Account:</h4>
+            <hr />
+            <div asp-validation-summary="All" id="CompanyValidationSummary" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyViewModel.UserID" class="form-control" type="hidden" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyName"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyName" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyPhoneNumber"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyPhoneNumber" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyPhoneNumber" class="text-danger"></span>
+                <div class="col-md-3">
+                    <input type="checkbox" name="ckCompanyPhoneSame" id="ckCompanyPhoneSame" />Same as user account<br />
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyEmail"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyEmail" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyEmail" class="text-danger"></span>
+                <div class="col-md-3">
+                    <input type="checkbox" name="ckCompanyEmailSame" id="ckCompanyEmailSame" />Same as user account<br />
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CountryID"></label>
+                @HtmlUtils.WorkByrdDropDownList("CountryID", Model.RegisterCompanyViewModel.CountryList, true, new { required = "required", @class = "disabled" })
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CountryID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyAddress1"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyAddress1" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyAddress1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyAddress2" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyAddress2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyAddress3" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyAddress3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyCity"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyCity" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyCity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyStateProvinceID"></label>
+                @HtmlUtils.WorkByrdDropDownList("CompanyStateProvinceID", Model.RegisterCompanyViewModel.StateProvinceList, true, new { })
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyStateProvinceID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyZipCode"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyZipCode" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyZipCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyURL"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyURL" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyURL" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyBusinessHours"></label>
+                <input asp-for="@Model.RegisterCompanyViewModel.CompanyBusinessHours" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyBusinessHours" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.RegisterCompanyViewModel.CompanyTimeZoneID"></label>
+                @HtmlUtils.WorkByrdDropDownList("CompanyTimeZoneID", Model.RegisterCompanyViewModel.TimeZoneList, true, new { })
+                <span asp-validation-for="@Model.RegisterCompanyViewModel.CompanyTimeZoneID" class="text-danger"></span>
+            </div>
+            <button id="btnCompanyForm" type="submit" class="btn btn-primary">Register Company</button>
+        </form>
+        <br />
+
+        <a id="VerifyCompanyEmailAnchor"></a>
+        <form name="VerifyCompanyEmailForm" id="VerifyCompanyEmailForm" asp-controller="Account" asp-action="ResendCompanyEmailVerification" method="post">
+            <h4>Verify Email:</h4>
+            <hr />
+            <div asp-validation-summary="All" id="CompanyEmailValidationSummary" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyEmailViewModel.UserID" id="CompanyEmailUserID" type="hidden" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyEmailViewModel.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyEmailViewModel.CompanyID" type="hidden" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyEmailViewModel.CompanyID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="@Model.RegisterCompanyEmailViewModel.Email" type="hidden" class="form-control" />
+                <span asp-validation-for="@Model.RegisterCompanyEmailViewModel.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <p>You should be receiving a verification email shortly. Haven't received it yet?</p>
+            </div>
+            <button id="btnResendCompanyEmailForm" type="submit" class="btn btn-primary">Resend Verification Email</button>
+        </form>
+        <br />
+
+        <a id="PaymentAnchor"></a>
+        <div id="stripe-card-payment">
+            <hr />
+            <!-- We'll put the error messages in this element -->
+            <div id="card-errors" role="alert" class="text-danger"></div>
+            <h4>Choose a Subscription</h4>
+            @foreach (var subscription in Model.StripeConfig.Subscriptions)
+            {
+                var display = " " + subscription.Name + " (" + subscription.Cost + " / month)";
+                <input type="radio" name="subscription" value="@subscription.Name" />@display
+                <br />
+            }
+
+            <input type="radio" name="subscription" value="Apprentice" /> Apprentice ($50/month) <br />
+        <input type="radio" name="subscription" value="Craftsman" /> Craftsman ($100/month) <br />
+        <input type="radio" name="subscription" value="Master Craftsman" /> Master Craftsman ($500/month) <br />
+
+            <!-- Use the CSS tab above to style your Element's container. -->
+            <div id="card-element" class="MyCardElement">
+                <!-- Elements will create input elements here -->
+            </div>
+            <button id="paysubmit">Pay</button>
+        </div>
+
+        <form name="create-customer-form" id="create-customer-form" asp-controller="Payment" asp-action="CreateCustomer" method="post">
+            <input id="stripe-subscription" name="stripe-subscription" type="hidden" />
+            <input id="stripe-companyid" name="stripe-companyid" type="hidden" />
+            <input id="stripe-payment-method-response" name="stripe-payment-method-response" type="hidden" />
+            <input id="stripe-create-customer-submit" type="submit" class="btn btn-default" style="display: none;" value="Create Customer" />            
+        </form>
+
+        <script src="https://js.stripe.com/v3/"></script>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+
+	$(document).ready(function () {
+		var useremailcheck; //set globally
+		var companyemailcheck; //set globally
+		var emailcheckinterval = 5000; //5 seconds
+		var emailcheckthreshold = 30*60*1000/emailcheckinterval; //threshold is 30 minutes... (360 attempts at 5 second check intervals)
+
+        $("#user-progress").hide();
+        $("#company-progress").hide();
+        $("#VerifyUserEmailForm").hide();
+		$("#CompanyForm").hide();
+		$("#VerifyCompanyEmailForm").hide();
+		$("#stripe-card-payment").hide();
+
+        //keep a reference of the form validators...
+        var userform = $("#UserForm").validate();
+        var useremailform = $("#VerifyUserEmailForm").validate();
+		var companyform = $("#CompanyForm").validate();
+		var companyemailform = $("#VerifyCompanyEmailForm").validate();
+
+		function alertOfUserEmailVerification() {
+			alert("An email verification has been sent to " + $("#RegisterUserViewModel_Email").val()
+				+ ". If you don't see this email in your inbox within several minutes, look for it in your junk mail folder.");
+		}
+
+		function alertOfCompanyEmailVerification() {
+			alert("An email verification has been sent to " + $("#RegisterCompanyViewModel_CompanyEmail").val()
+				+ ". If you don't see this email in your inbox within several minutes, look for it in your junk mail folder.");
+		}
+
+		//used by both the user check and company check to provide a collective count
+		var checkEmailLimit = (function () { //counter closure...
+			var counter = 0;
+			return function () {
+				counter += 1; return counter;
+			}
+		})();
+
+        // Set your publishable key: remember to change this to your live publishable key in production
+		// See your keys here: https://dashboard.stripe.com/account/apikeys
+        
+		var stripe = Stripe('@Model.StripeConfig.PublishableKey'); //pk_test_TYooMQauvdEDq54NiTphI7jx
+		var elements = stripe.elements();
+
+		// Set up Stripe.js and Elements to use in checkout form
+		var style = {
+			base: {
+				color: "#32325d",
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: "antialiased",
+				fontSize: "16px",
+				"::placeholder": {
+					color: "#aab7c4"
+				}
+			},
+			invalid: {
+				color: "#fa755a",
+				iconColor: "#fa755a"
+			}
+		};
+
+		var card = elements.create("card", { style: style });
+		card.mount("#card-element");
+
+		//Elements validates user input as it is typed. To help your customers catch mistakes, listen to change events on the card Eleemnt and display any errors.
+		card.addEventListener('change', function (event) {
+			var displayError = document.getElementById('card-errors');
+			if (event.error) {
+				displayError.textContent = event.error.message;
+			} else {
+				displayError.textContent = '';
+			}
+		});
+
+		$("#paysubmit").click(function () {
+			debugger;
+			//Use createPaymentMethod to convert payment information collected by Elements into a PaymentMethod object that you can safely pass to your server to use in an API call.
+			//After the user clicks submit, a PaymentMethod ID is returned that you can use to create and subscribe a customer.
+			stripe.createPaymentMethod('card', card, {
+				billing_details: {
+					email: $("#RegisterCompanyEmailViewModel_Email").val(), //Use the company email as the customer
+				},
+			}).then(function (result) {
+                debugger;
+
+                if (result.error != null) {
+                    $("#card-errors").empty();
+                    $("#card-errors").append("<ul><li>" + result.error.message + "</li></ul>");
+                } else {
+                    $("#stripe-subscription").val($("input[name=subscription]").val());
+                    $("#stripe-payment-method-response").val(JSON.stringify(result.paymentMethod));
+                    $("#create-customer-form").submit();
+                }
+			});
+		});
+        
+        $("#UserForm").submit(function (e) {
+            if (userform.form()) {
+                $("#UserValidationSummary > ul").empty();
+                var formData = new FormData(e.target); //grab form data before disabling the form. Important!
+                disableForm("#UserForm");
+                $("#user-progress").show();
+
+                wbGetSecureJSON(
+                    '@Url.Action("RegisterUser", "Account")',
+                    formData,
+                    true
+                ).then(function (data) {
+                    if (data.Success != null) {
+                        $("#UserValidationSummary").empty();
+                        $("#RegisterUserEmailViewModel_UserID").val(data.Success.UserID);
+                        $("#CompanyEmailUserID").val(data.Success.UserID);
+						$("#RegisterCompanyViewModel_UserID").val(data.Success.UserID);
+                        progressComplete("#user-progress");
+                        $("#VerifyUserEmailForm").show();
+                        $("#user-email-progress").show();
+                        scrollToAnchor("#VerifyUserEmailAnchor");
+						useremailcheck = setInterval(isUserEmailVerified, emailcheckinterval); //start checking for email verification every 5 seconds...
+						alertOfUserEmailVerification();
+                    } else if (data.Error != null) {
+                        enableForm("#UserForm"); //the user needs to be able to resubmit...
+                        clearProgress("#user-progress");
+                        console.log(data.Error.Message);
+                        try {
+                            $.each(data.Error.Message, function (index, value) {
+                                if (value.code !== "DuplicateUserName") { //filter out this type of message. This error presents along with the duplicate email so let's only show one of them while also allowing us to show other possible errors...
+                                    $("#UserValidationSummary > ul").append("<li>" + value.description + "</li>");
+                                }
+                            });
+                        } catch (err) {
+                            //data.Error.Message is not a list of value.code and value.description. treat it as a string.
+                            $("#UserValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                        }
+                    }
+                }).catch(function (err) {
+                    console.error(err);
+                    enableForm("#UserForm"); //the user needs to be able to resubmit...
+                    clearProgress("#user-progress");
+                    $("#UserValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+                });
+            }
+            e.preventDefault(); //stop normal form submission
+        });
+
+        function isUserEmailVerified() {
+            debugger;
+			if (checkEmailLimit() < emailcheckthreshold) {
+                if (useremailform.form()) {
+                    $("#UserEmailValidationSummary > ul").empty();
+					var formData = new FormData($("#VerifyUserEmailForm").get(0));
+					wbGetSecureJSON(
+						'@Url.Action("IsUserEmailVerified", "Account")',
+						formData,
+						true
+                    ).then(function (data) {
+                        debugger;
+                        console.log(data);
+						if (data.Success != null) {
+							if (data.Success.isConfirmed) {
+								clearInterval(useremailcheck);
+								disableForm("#VerifyUserEmailForm"); //the email has been verified so don't let the user resend verification codes...
+								$("#CompanyForm").show();
+								progressComplete("#user-email-progress");
+								scrollToAnchor("#CompanyAnchor");
+							} else {
+								//not yet confirmed. We will check back again soon...
+							}
+                        } else if (data.Error != null) {
+							$.each(data.Error.Message, function(index, value){
+								$("#UserEmailValidationSummary > ul").append("<li>" + value + "</li>");
+							});
+							clearInterval(useremailcheck);
+							clearProgress("#user-email-progress");
+                        }
+					}).catch(function (err) {
+						console.error(err);
+						$("#UserEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+						clearInterval(useremailcheck);
+						clearProgress("#user-email-progress");
+					});
+				}
+			} else {
+				useremailform.form(); //reset any validation messages (or clear them)
+				$("#UserEmailValidationSummary > ul").append("<li>You will no longer be able to complete the registration process from this screen. Please verify your email address with one of the verification emails that was sent to you. You can login to your account to complete the registration process. If you did not receive a validation email, please contact customer support.</li > ");
+				clearInterval(useremailcheck);
+				clearProgress("#user-email-progress");
+			}
+		}
+
+        $("#VerifyUserEmailForm").submit(function (e) {
+            debugger;
+            e.preventDefault(); //stop normal form submission
+            if (useremailform.form()) {
+                $("#UserEmailValidationSummary > ul").empty();
+                var formData = new FormData(e.target);
+                wbGetSecureJSON(
+                    '@Url.Action("ResendUserEmailVerification", "Account")',
+                    formData,
+                    true
+                ).then(function (data) {
+					if (data.Success != null) {
+						alertOfUserEmailVerification();
+					} else if (data.Error != null) {
+                        $("#UserEmailValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                        clearInterval(useremailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+						clearProgress("#user-email-progress");
+                    }
+                }).catch(function (err) {
+                    console.error(err);
+                    $("#UserEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+					clearInterval(useremailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+					clearProgress("#user-email-progress");
+                });
+            }
+        });
+
+        $("#CompanyForm").submit(function (e) {
+            debugger;
+			e.preventDefault(); //stop normal form submission
+
+            if (companyform.form()) {
+                var formData = new FormData(e.target);
+                disableForm("#CompanyForm");
+                $("#company-progress").show();
+                wbGetSecureJSON(
+                    '@Url.Action("RegisterCompany", "Account")',
+                    formData,
+                    true
+                ).then(function (data) {
+					if (data.Success != null) {
+						progressComplete("#company-progress");
+                        $("#VerifyCompanyEmailForm").show();
+                        $("#RegisterCompanyEmailViewModel_CompanyID").val(data.Success.CompanyID);
+                        $("#stripe-companyid").val(data.Success.CompanyID);
+                        $("#RegisterCompanyEmailViewModel_Email").val($("#RegisterCompanyViewModel_CompanyEmail").val());
+                        $("#stripe-customer-email").val($("#RegisterCompanyViewModel_CompanyEmail").val());
+						if ($("#RegisterCompanyViewModel_CompanyEmail").val() === $("#RegisterUserViewModel_Email").val()) {
+							disableForm("#VerifyCompanyEmailForm"); //the email has been verified so don't let the user resend verification codes...
+                            progressComplete("#company-email-progress");
+							$("#stripe-card-payment").show();
+                        } else {
+							companyemailcheck = setInterval(isCompanyEmailVerified, emailcheckinterval); //start checking for email verification every 5 seconds...
+							alertOfCompanyEmailVerification();
+						}
+                    } else if (data.Error != null) {
+                        enableForm("#CompanyForm"); //the user needs to be able to resubmit...
+                        clearProgress("#company-progress");
+						$("#CompanyValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                    }
+                }).catch(function (err) {
+                    console.error(err);
+                    enableForm("#CompanyForm"); //the user needs to be able to resubmit...
+                    clearProgress("#company-progress");
+                    $("#CompanyValidationSummary > ul").append("<li>" + err + "</li>");
+                });
+            }
+        });
+
+    function isCompanyEmailVerified() {
+            debugger;
+			if (checkEmailLimit() < emailcheckthreshold) {
+				if (companyemailform.form()) {
+					var formData = new FormData($("#VerifyCompanyEmailForm").get(0));
+
+					wbGetSecureJSON(
+						'@Url.Action("IsCompanyEmailVerified", "Account")',
+						formData,
+						true
+                    ).then(function (data) {
+                        debugger;
+                        if (data.Success != null) {
+                            console.log(data.Success);
+							if (data.Success.isConfirmed) {
+								clearInterval(companyemailcheck);
+								disableForm("#VerifyCompanyEmailForm"); //the email has been verified so don't let the user resend verification codes...
+								progressComplete("#company-email-progress");
+								scrollToAnchor("#PaymentAnchor");
+								$("#stripe-card-payment").show();
+							} else {
+								//not yet confirmed. We will check back again soon...
+							}
+                        } else if (data.Error != null) {
+                            console.log(data.Error.Message);
+							$.each(data.Error.Message, function(index, value){
+								$("#CompanyEmailValidationSummary > ul").append("<li>" + value + "</li>");
+							});
+							clearInterval(companyemailcheck);
+							clearProgress("#company-email-progress");
+						}
+					}).catch(function (err) {
+						console.error(err);
+						$("#CompanyEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+						clearInterval(companyemailcheck);
+						clearProgress("#company-email-progress");
+					});
+				}
+			} else {
+				companyemailform.form(); //reset any validation messages (or clear them)
+				$("#CompanyEmailValidationSummary > ul").append("<li>You will no longer be able to complete the registration process from this screen. Please verify your email address with one of the verification emails that was sent to you. You can login to your account to complete the registration process. If you did not receive a validation email, please contact customer support.</li > ");
+				clearInterval(companyemailcheck);
+				clearProgress("#company-email-progress");
+			}
+		}
+
+    $("#VerifyCompanyEmailForm").submit(function (e) {
+            debugger;
+			e.preventDefault(); //stop normal form submission
+
+            if (companyemailform.form()) {
+				var formData = new FormData(e.target);
+
+                wbGetSecureJSON(
+                    '@Url.Action("ResendCompanyEmailVerification", "Account")',
+                    formData,
+                    true
+                ).then(function (data) {
+					if (data.Success != null) {
+						alertOfCompanyEmailVerification();
+					} else if (data.Error != null) {
+                        $("#CompanyEmailValidationSummary > ul").append("<li>" + data.Error.Message + "</li>");
+                        clearInterval(companyemailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+						clearProgress("#company-email-progress");
+                    }
+                }).catch(function (err) {
+                    console.error(err);
+                    $("#CompanyEmailValidationSummary > ul").append("<li>An error occurred on the server. Please try again later or contact customer service.</li>");
+					clearInterval(companyemailcheck); //if we weren't able to send an email verification then the user can't verify their email so no use in continuing to check for verification...
+					clearProgress("#company-email-progress");
+                });
+            }
+        });
+
+        $("#ckCompanyPhoneSame").change(function () {
+            if($("#ckCompanyPhoneSame").is(":checked")){
+                $("#RegisterCompanyViewModel_CompanyPhoneNumber").val($("#RegisterUserViewModel_PhoneNumber").val());
+            } else {
+                $("#RegisterCompanyViewModel_CompanyPhoneNumber").val("");
+            }
+        });
+
+        $("#ckCompanyEmailSame").change(function () {
+            if($("#ckCompanyEmailSame").is(":checked")){
+                $("#RegisterCompanyViewModel_CompanyEmail").val($("#RegisterUserViewModel_Email").val());
+            } else {
+                $("#RegisterCompanyViewModel_CompanyEmail").val("");
+            }
+		});
+
+		$("#RegisterCompanyViewModel_CompanyEmail").change(function () {
+			$("#RegisterCompanyEmailViewModel_Email").val($("#RegisterCompanyViewModel_CompanyEmail").val());
+		});
+
+        $("#CountryID").change(function () {
+            wbGetSecureJSON(
+                '@Url.Action("GetSecureStateProvinces", "Ajax")',
+                {CountryID: $("#CountryID").val()},
+                true
+            ).then(function (data) {
+                refreshDropdown("#CompanyStateProvinceID", data);
+            }).catch(function (err) {
+                console.error(err);
+                clearDropdown("#CompanyStateProvinceID");
+            });
+        });
+    });
+
+</script>*@

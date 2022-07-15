@@ -1,0 +1,268 @@
+﻿@model WorkByrdServer.Models.SubscriptionViewModel
+
+@{
+    ViewData["Title"] = "Choose a Subscription";
+}
+
+<style>
+	/*https://www.youtube.com/watch?v=ucggKiZOJdw at 6:37*/
+    /*https://stackoverflow.com/questions/32935435/use-div-as-radio-button*/
+	/*TODO*/
+    .subscription > input {
+        visibility: hidden; /*Makes input not-clickable*/
+        position: absolute; /*Remove input from document flow*/
+    }
+
+	.subscription > input + div{ /*DIV STYLES*/
+		cursor: pointer;
+		border: 2px solid transparent;
+	}
+
+	.subscription > input:checked + div{ /*(RADIO CHECKED) DIV STYLES*/
+		border: 10px solid green;
+	}
+</style>
+
+<h1>@ViewData["Title"]</h1>
+
+<div id="stripe-card-payment">
+	<hr />
+	<!-- We'll put the error messages in this element -->
+	<div id="card-errors" role="alert" class="text-danger"></div>
+	<h4>Choose a Subscription</h4>
+	@foreach (var subscription in Model.Config.Subscriptions)
+	{
+		var display = " " + subscription.Name + " (" + subscription.Cost + " / month)";
+		<input type="radio" name="subscription" value="@subscription.Name" />@display
+		<br />
+	}
+
+    <div><bold>Chosen Subscription: </bold><input id="ChosenSubscription" name="ChosenSubscription" type="text" disabled="disabled" value="" /></div>
+    <div><bold>Payment Breakdown:</bold></div>
+    <div id="cost-breakdown">
+        
+    </div>
+
+	<!-- Use the CSS tab above to style your Element's container. -->
+	<div id="card-element" class="MyCardElement">
+		<!-- Elements will create input elements here -->
+	</div>
+
+	<!-- We'll put the error messages in this element -->
+	<div id="card-errors" role="alert" class="text-danger"></div>
+
+	<button id="paysubmit">Pay</button>
+
+    <input id="customerid" name="customerid" type="hidden" value="@Model.StripeCustomerID"/>
+
+	<script src="https://js.stripe.com/v3/"></script>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    //GLOBAL VARIABLES
+    var paymentIntentClientSecret = null;
+    var paymentIntentID = null;
+    //var secretGoodForSubscriptionType = null;
+    //var secretGoodForPaymentType = null;
+
+    function showCostBreakdown(data) {
+        var breakdown = [];
+        var subscription = $("input[name='subscription']:checked").val();
+        var total = data.taxCollectable + data.taxableAmount;
+        breakdown.push("<table>");        
+        breakdown.push("  <thead>");
+        breakdown.push("      <tr>");
+        breakdown.push("          <td>");
+        breakdown.push("              Line Item");
+        breakdown.push("          </td>");
+        breakdown.push("          <td>");        
+        breakdown.push("              Cost");
+        breakdown.push("          </td>");
+        breakdown.push("      </tr>");
+        breakdown.push("  </thead>");
+        breakdown.push("  <tbody>");
+        breakdown.push("      <tr>");
+        breakdown.push("          <td>" + subscription + " Subscription</td>");
+        breakdown.push("          <td>" + data.taxableAmount + "</td>");
+        breakdown.push("      </tr>");
+        breakdown.push("      <tr>");
+        breakdown.push("          <td>Taxes</td>");
+        breakdown.push("          <td>" + data.taxCollectable + "</td>");
+        breakdown.push("      </tr>");
+        breakdown.push("      <tr>");
+        breakdown.push("          <td>Total</td>");
+        breakdown.push("          <td><bold>$" + total + "</bold></td>");
+        breakdown.push("      </tr>");
+        breakdown.push("  </tbody>");
+        breakdown.push("</table>");
+
+        $("#cost-breakdown").html(breakdown.join(""));
+    }
+
+    $(document).ready(function () {
+
+        var subscriptionData = new Object();
+
+        // Set your publishable key: remember to change this to your live publishable key in production
+        // See your keys here: https://dashboard.stripe.com/account/apikeys
+
+        var stripe = Stripe('@Model.Config.PublishableKey'); //pk_test_TYooMQauvdEDq54NiTphI7jx
+        var elements = stripe.elements();
+
+        // Set up Stripe.js and Elements to use in checkout form
+        var style = {
+            base: {
+                color: "#32325d",
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: "antialiased",
+                fontSize: "16px",
+                "::placeholder": {
+                    color: "#aab7c4"
+                }
+            },
+            invalid: {
+                color: "#fa755a",
+                iconColor: "#fa755a"
+            }
+        };
+
+        var card = elements.create("card", { style: style });
+        card.mount("#card-element");
+
+        //Elements validates user input as it is typed. To help your customers catch mistakes, listen to change events on the card Eleemnt and display any errors.
+        card.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        $("input[name='subscription']").on("change", function (e) { //TODO: .on("change click", function(e){
+            var chosen = $("input[name='subscription']:checked").val();
+            $("#ChosenSubscription").val(chosen);
+
+            @*if (subscriptionData[chosen] == undefined) { //if the data is not cached then fetch it 
+                var formData = new FormData();
+                formData.append("Subscription", chosen);
+                wbGetSecureJSON(
+                    '@Url.Action("CalculateTaxes", "Payment")',
+                    formData
+                ).then(function (data) {
+                    debugger;
+                    subscriptionData[chosen] = data.Success.Data; //cache for later
+                    //populate the line item table with the cached data here...
+                    showCostBreakdown(subscriptionData[chosen]);
+                }).catch(function (err) {
+                    debugger;
+                    console.error(err);
+                });
+            } else {
+                debugger;
+                //the data is cached... populate the line item table with the cached data here...
+                showCostBreakdown(subscriptionData[chosen]);
+            }*@
+        });
+
+        $("#paysubmit").click(function () {
+            debugger;
+            //disable all form values here...            
+
+            var savedPaymentId = $("input[name='savedPaymentMethod']:checked").val(); //TODO //NOTE: the empty value option will be for the user to enter a new card...
+
+            var formData = new FormData();
+            formData.append("Subscription", $("input[name='subscription']:checked").val());
+            formData.append("StripeCustomerID", $("#customerid").val());
+            if (paymentIntentID != null) {
+                formData.append("PaymentIntentID", paymentIntentID);
+            }
+            if (savedPaymentId != null) {
+                formData.append("PaymentMethodID", savedPaymentId);
+            }
+
+            //PreparePayment will both create and update a payment intent...
+            //tax calculations will be cached so no harm in repeat calls here...
+            wbGetSecureJSON(
+                '@Url.Action("PreparePayment", "Payment")',
+                formData
+            ).then(function (data) {
+                debugger;
+                if (data != null && data.Success != null) {
+                    paymentIntentID = data.Success.PaymentIntentID;
+
+                    var confirmPaymentOptions = new Object();
+                    if (savedPaymentId == null || savedPaymentId == "") {
+                        //this means we are using a new card
+                        confirmPaymentOptions.payment_method = new Object();
+                        confirmPaymentOptions.payment_method.card = card;
+                        confirmPaymentOptions.payment_method.billing_details = new Object();
+                        confirmPaymentOptions.payment_method.billing_details.name = "test"; //TODO - get from view model...
+                        confirmPaymentOptions.setup_future_usage = "off_session";
+                    } else {
+                        confirmPaymentOptions.payment_method = savedPaymentId;
+                    }
+                    stripe.confirmCardPayment(
+                        data.Success.PaymentIntentClientSecret,
+                        confirmPaymentOptions
+                    ).then(function (result) {
+                        debugger;
+                        if (result.error) {
+                            //show error to customer here...
+                        } else {
+                            if (result.paymentIntent.status === 'succeeded') {
+                                debugger;
+                                //show a success message to your customer here...
+                                //sleep a few seconds?
+                                //redirect to customer dashboard?
+
+                                //TODO - build a webhook to listen for this event so we can actually update 
+                                //    the customer's subscription, payment methods, send email confirmation, 
+                                //    create a Tax Transaction for Tax Jar, etc.
+                            } else {
+                                //display a different type of error to the user?
+                            }
+                        }
+                    }).catch(function (err) {
+                        console.error(err);
+                    });
+                } else {
+                    //error occurred...
+                }
+            }).catch(function (err) {
+                console.error(err);                
+            });
+
+            //AJAX: PaymentController/CreatePaymentIntent
+
+
+
+
+
+            ////Use createPaymentMethod to convert payment information collected by Elements into a PaymentMethod object that you can safely pass to your server to use in an API call.
+            ////After the user clicks submit, a PaymentMethod ID is returned that you can use to create and subscribe a customer.
+            //stripe.createPaymentMethod('card', card, {
+            //	billing_details: {
+            //		email: $("#RegisterCompanyEmailViewModel_Email").val(), //Use the company email as the customer
+            //	},
+            //}).then(function (result) {
+            //             debugger;
+
+            //             if (result.error != null) {
+            //                 $("#card-errors").empty();
+            //                 $("#card-errors").append("<ul><li>" + result.error.message + "</li></ul>");
+            //             } else {
+            //                 $("#stripe-subscription").val($("input[name=subscription]").val());
+            //                 $("#stripe-payment-method-response").val(JSON.stringify(result.paymentMethod));
+            //                 $("#create-customer-form").submit();
+            //             }
+            //});
+        });
+    });
+</script>

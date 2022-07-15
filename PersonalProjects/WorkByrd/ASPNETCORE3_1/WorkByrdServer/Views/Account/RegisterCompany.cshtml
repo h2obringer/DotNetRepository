@@ -1,0 +1,148 @@
+﻿@model RegisterCompanyViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    @* -------------------------------------------------------------COMPANY FORM------------------------------------------------------------- *@
+    <a id="CompanyAnchor"></a>
+    <form name="CompanyForm" id="CompanyForm" asp-controller="Account" asp-action="RegisterCompany" method="post">
+        <h4>Create a new Company Account:</h4>
+        <hr />
+        <div asp-validation-summary="All" id="CompanyValidationSummary" class="text-danger"></div>
+        <div class="form-group">
+            <input asp-for="@Model.UserID" class="form-control" type="hidden" />
+            <span asp-validation-for="@Model.UserID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyName"></label>
+            <input asp-for="@Model.CompanyName" class="form-control" />
+            <span asp-validation-for="@Model.CompanyName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyPhoneNumber"></label>
+            <input asp-for="@Model.CompanyPhoneNumber" class="form-control" />
+            <span asp-validation-for="@Model.CompanyPhoneNumber" class="text-danger"></span>
+            <div class="col-md-3">
+                <input type="checkbox" name="ckCompanyPhoneSame" id="ckCompanyPhoneSame" />Same as user account<br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyEmail"></label>
+            <input asp-for="@Model.CompanyEmail" class="form-control" />
+            <span asp-validation-for="@Model.CompanyEmail" class="text-danger"></span>
+            <div class="col-md-3">
+                <input type="checkbox" name="ckCompanyEmailSame" id="ckCompanyEmailSame" />Same as user account<br />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CountryID"></label>
+            @HtmlUtils.WorkByrdDropDownList("CountryID", Model.CountryList, true, new { required = "required", @class = "disabled" })
+            <span asp-validation-for="@Model.CountryID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyAddress1"></label>
+            <input asp-for="@Model.CompanyAddress1" class="form-control" />
+            <span asp-validation-for="@Model.CompanyAddress1" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            @*<label asp-for="@Model.CompanyAddress2"></label>*@
+            <input asp-for="@Model.CompanyAddress2" class="form-control" />
+            <span asp-validation-for="@Model.CompanyAddress2" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            @*<label asp-for="@Model.CompanyAddress3"></label>*@
+            <input asp-for="@Model.CompanyAddress3" class="form-control" />
+            <span asp-validation-for="@Model.CompanyAddress3" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyCity"></label>
+            <input asp-for="@Model.CompanyCity" class="form-control" />
+            <span asp-validation-for="@Model.CompanyCity" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyStateProvinceID"></label>
+            @HtmlUtils.WorkByrdDropDownList("CompanyStateProvinceID", Model.StateProvinceList, true, new { })
+            <span asp-validation-for="@Model.CompanyStateProvinceID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyZipCode"></label>
+            <input asp-for="@Model.CompanyZipCode" class="form-control" />
+            <span asp-validation-for="@Model.CompanyZipCode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyURL"></label>
+            <input asp-for="@Model.CompanyURL" class="form-control" />
+            <span asp-validation-for="@Model.CompanyURL" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyBusinessHours"></label>
+            <input asp-for="@Model.CompanyBusinessHours" class="form-control" />
+            <span asp-validation-for="@Model.CompanyBusinessHours" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.CompanyTimeZoneID"></label>
+            @HtmlUtils.WorkByrdDropDownList("CompanyTimeZoneID", Model.TimeZoneList, true, new { })
+            <span asp-validation-for="@Model.CompanyTimeZoneID" class="text-danger"></span>
+        </div>
+        <input asp-for="@Model.CountryList" type="hidden" />
+        <input asp-for="@Model.StateProvinceList" type="hidden" />
+        <input asp-for="@Model.TimeZoneList" type="hidden" />
+        <button id="btnCompanyForm" type="submit" class="btn btn-primary">Register Company</button>
+    </form>
+    <br />
+</div>
+
+<input id="useremail" name="useremail" type="hidden" value="@Model.UserEmail"/>
+<input id="userphone" name="userphone" type="hidden" value="@Model.UserPhone"/>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@* -------------------------------------------------------------JAVASCRIPT------------------------------------------------------------- *@
+<script>
+
+	$(document).ready(function () {
+
+        $("#company-progress").hide();
+
+		function alertOfCompanyEmailVerification() {
+			alert("An email verification has been sent to " + $("#CompanyEmail").val()
+				+ ". If you don't see this email in your inbox within several minutes, look for it in your junk mail folder.");
+		}
+
+        $("#ckCompanyPhoneSame").change(function () {
+            if ($("#ckCompanyPhoneSame").is(":checked")) {
+                $("#CompanyPhoneNumber").val($("#userphone").val());
+            } else {
+                $("#CompanyPhoneNumber").val("");
+            }
+        });
+
+        $("#ckCompanyEmailSame").change(function () {
+            if($("#ckCompanyEmailSame").is(":checked")){
+                $("#CompanyEmail").val($("#useremail").val());
+            } else {
+                $("#CompanyEmail").val("");
+            }
+		});
+
+        $("#CountryID").change(function () {
+            var formData = new FormData();
+            formData.append("CountryID", $("#CountryID").val());
+            wbGetSecureJSON(
+                '@Url.Action("GetSecureStateProvinces", "Ajax")',
+                formData
+            ).then(function (data) {
+                refreshDropdown("#CompanyStateProvinceID", data);
+            }).catch(function (err) {
+                console.error(err);
+                clearDropdown("#CompanyStateProvinceID");
+            });
+        });
+    });
+
+</script>

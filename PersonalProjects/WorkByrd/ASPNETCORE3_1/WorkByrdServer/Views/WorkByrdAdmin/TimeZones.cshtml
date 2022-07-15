@@ -1,0 +1,10 @@
+﻿@model List<WorkByrdServer.Models.TimeZoneAdmin>
+
+@{
+    ViewData["Title"] = "WorkByrd Administration - Geography - Time Zones";
+
+}
+
+<h4>@ViewData["Title"]</h4>
+
+@Html.WorkByrdDataTable(Model, "TimeZone", Url.ActionLink("TimeZones", "WorkByrdAdmin"))
